@@ -6,16 +6,38 @@
     <style>
         /* FORCE COLORS TO PRINT */
         * {
-            -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
-            print-color-adjust: exact !important;           /* Firefox */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
 
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 40px;
-            background: #e0e0e0; /* Grey background for screen only */
+            background: #e0e0e0;
             color: #333;
+        }
+
+        /* PRINT BUTTON */
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2e1b4e;
+            color: white;
+            border: 2px solid #f7941d;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .print-btn:hover {
+            background-color: #f7941d;
+            border-color: #2e1b4e;
+            color: #2e1b4e;
         }
 
         /* PAGE CONTAINER */
@@ -24,36 +46,38 @@
             margin: 0 auto;
             background: white;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-height: 1000px; /* Represents A4 paper height */
+            min-height: 1000px;
             position: relative;
         }
 
-        /* HEADER DESIGN */
+        /* HEADER */
         .header {
-            background-color: #2e1b4e; /* YOUR PURPLE */
+            background-color: #2e1b4e;
             color: white;
             padding: 40px 50px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 5px solid #f7941d; /* YOUR ORANGE */
+            border-bottom: 5px solid #f7941d;
         }
 
         /* LOGO SECTION */
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            /* If your logo has white background, this makes it look cleaner */
+            background: white; 
+            padding: 5px 15px;
+            border-radius: 4px;
         }
         
-        .logo-text {
-            font-size: 38px;
-            font-weight: 800;
-            line-height: 1;
+        .logo-img {
+            height: 80px; /* Adjust this size if needed */
+            width: auto;
+            display: block;
         }
-        .logo-text span { color: #f7941d; }
 
-        /* INVOICE DETAILS TOP RIGHT */
+        /* INVOICE DETAILS */
         .invoice-details {
             text-align: right;
         }
@@ -61,7 +85,7 @@
             margin: 0;
             font-size: 50px;
             letter-spacing: 2px;
-            opacity: 0.2; /* Watermark style */
+            opacity: 0.2;
             text-transform: uppercase;
         }
         .invoice-meta-grid {
@@ -94,9 +118,7 @@
             padding: 40px 50px;
             gap: 40px;
         }
-        .addr-box {
-            width: 48%;
-        }
+        .addr-box { width: 48%; }
         .addr-box h3 {
             color: #f7941d;
             font-size: 14px;
@@ -120,16 +142,11 @@
             outline: none;
         }
 
-        /* TABLE DESIGN */
-        .table-wrapper {
-            padding: 0 50px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        /* TABLE */
+        .table-wrapper { padding: 0 50px; }
+        table { width: 100%; border-collapse: collapse; }
         th {
-            background-color: #f7941d; /* ORANGE HEADER */
+            background-color: #f7941d;
             color: white;
             padding: 12px 15px;
             text-transform: uppercase;
@@ -137,12 +154,8 @@
             font-weight: bold;
             text-align: left;
         }
-        td {
-            border-bottom: 1px solid #eee;
-            padding: 5px 10px;
-        }
+        td { border-bottom: 1px solid #eee; padding: 5px 10px; }
         
-        /* TABLE INPUTS */
         input.desc { width: 100%; padding: 10px; border: none; }
         input.num { width: 100%; padding: 10px; border: none; text-align: right; }
         input:focus { background: #fdfdfd; outline: 1px solid #ddd; }
@@ -155,7 +168,7 @@
             font-weight: 500;
         }
 
-        /* TOTALS SECTION */
+        /* TOTALS */
         .totals-section {
             padding: 30px 50px;
             display: flex;
@@ -201,30 +214,21 @@
         @media print {
             body { padding: 0; background: white; }
             .container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; }
-            .no-print { display: none; }
+            .print-btn { display: none !important; }
             textarea, input { border: none !important; background: transparent !important; resize: none; }
-            /* Hide placeholders when printing */
             input::placeholder, textarea::placeholder { color: transparent; }
         }
     </style>
 </head>
 <body>
 
-<div class="no-print" style="text-align:center; padding:15px; background:#333; color:white; font-family:sans-serif;">
-    ⚠️ <strong>IMPORTANT:</strong> When printing, ensure <strong>"Background Graphics"</strong> is CHECKED in settings.
-</div>
+<button class="print-btn" onclick="window.print()">🖨️ Print Invoice</button>
 
 <div class="container">
     
     <div class="header">
         <div class="logo-container">
-            <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="50" fill="#F58220"/>
-                <path d="M50 20C38.9543 20 30 28.9543 30 40C30 55 50 75 50 75C50 75 70 55 70 40C70 28.9543 61.0457 20 50 20ZM50 48C45.5817 48 42 44.4183 42 40C42 35.5817 45.5817 32 50 32C54.4183 32 58 35.5817 58 40C58 44.4183 54.4183 48 50 48Z" fill="#2E1B4E"/>
-                <path d="M20 85C30 75 40 85 50 95" stroke="white" stroke-width="5" stroke-linecap="round"/>
-                <path d="M50 95C60 85 80 80 85 70" stroke="white" stroke-width="5" stroke-linecap="round"/>
-            </svg>
-            <div class="logo-text">Journey <span>Mate</span></div>
+            <img src="logo.jpg" alt="Journey Mate Logo" class="logo-img">
         </div>
 
         <div class="invoice-details">
@@ -345,7 +349,6 @@
         document.getElementById('totalDisplay').innerText = grandTotal.toFixed(2);
     }
 
-    // Attach listeners
     table.addEventListener('input', updateTotals);
     taxInput.addEventListener('input', updateTotals);
 </script>
