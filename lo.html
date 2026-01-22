@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Journey Mate Invoice</title>
+    <style>
+        /* FORCE COLORS TO PRINT */
+        * {
+            -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
+            print-color-adjust: exact !important;           /* Firefox */
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: #e0e0e0; /* Grey background for screen only */
+            color: #333;
+        }
+
+        /* PAGE CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            min-height: 1000px; /* Represents A4 paper height */
+            position: relative;
+        }
+
+        /* HEADER DESIGN */
+        .header {
+            background-color: #2e1b4e; /* YOUR PURPLE */
+            color: white;
+            padding: 40px 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 5px solid #f7941d; /* YOUR ORANGE */
+        }
+
+        /* LOGO SECTION */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-text {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .logo-text span { color: #f7941d; }
+
+        /* INVOICE DETAILS TOP RIGHT */
+        .invoice-details {
+            text-align: right;
+        }
+        .invoice-details h1 {
+            margin: 0;
+            font-size: 50px;
+            letter-spacing: 2px;
+            opacity: 0.2; /* Watermark style */
+            text-transform: uppercase;
+        }
+        .invoice-meta-grid {
+            display: grid;
+            grid-template-columns: auto auto;
+            gap: 5px 15px;
+            justify-content: end;
+            margin-top: 10px;
+        }
+        .invoice-meta-grid label {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.8;
+            padding-top: 4px;
+        }
+        .invoice-meta-grid input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 4px;
+            width: 110px;
+            text-align: right;
+            font-family: inherit;
+        }
+
+        /* ADDRESS SECTION */
+        .address-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 40px 50px;
+            gap: 40px;
+        }
+        .addr-box {
+            width: 48%;
+        }
+        .addr-box h3 {
+            color: #f7941d;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        textarea.address-input {
+            width: 100%;
+            height: 80px;
+            border: 1px dashed #ccc;
+            padding: 10px;
+            font-family: inherit;
+            resize: none;
+            background: #fafafa;
+        }
+        textarea.address-input:focus {
+            background: #fff;
+            border: 1px solid #2e1b4e;
+            outline: none;
+        }
+
+        /* TABLE DESIGN */
+        .table-wrapper {
+            padding: 0 50px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #f7941d; /* ORANGE HEADER */
+            color: white;
+            padding: 12px 15px;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: left;
+        }
+        td {
+            border-bottom: 1px solid #eee;
+            padding: 5px 10px;
+        }
+        
+        /* TABLE INPUTS */
+        input.desc { width: 100%; padding: 10px; border: none; }
+        input.num { width: 100%; padding: 10px; border: none; text-align: right; }
+        input:focus { background: #fdfdfd; outline: 1px solid #ddd; }
+
+        .amount-display {
+            display: block;
+            text-align: right;
+            padding-right: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* TOTALS SECTION */
+        .totals-section {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .totals-card {
+            width: 300px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .grand-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #2e1b4e;
+            color: #2e1b4e;
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        /* FOOTER */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #eee;
+            padding: 20px 50px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* PRINT SETTINGS */
+        @media print {
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; }
+            .no-print { display: none; }
+            textarea, input { border: none !important; background: transparent !important; resize: none; }
+            /* Hide placeholders when printing */
+            input::placeholder, textarea::placeholder { color: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print" style="text-align:center; padding:15px; background:#333; color:white; font-family:sans-serif;">
+    ⚠️ <strong>IMPORTANT:</strong> When printing, ensure <strong>"Background Graphics"</strong> is CHECKED in settings.
+</div>
+
+<div class="container">
+    
+    <div class="header">
+        <div class="logo-container">
+            <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="50" fill="#F58220"/>
+                <path d="M50 20C38.9543 20 30 28.9543 30 40C30 55 50 75 50 75C50 75 70 55 70 40C70 28.9543 61.0457 20 50 20ZM50 48C45.5817 48 42 44.4183 42 40C42 35.5817 45.5817 32 50 32C54.4183 32 58 35.5817 58 40C58 44.4183 54.4183 48 50 48Z" fill="#2E1B4E"/>
+                <path d="M20 85C30 75 40 85 50 95" stroke="white" stroke-width="5" stroke-linecap="round"/>
+                <path d="M50 95C60 85 80 80 85 70" stroke="white" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="logo-text">Journey <span>Mate</span></div>
+        </div>
+
+        <div class="invoice-details">
+            <h1>INVOICE</h1>
+            <div class="invoice-meta-grid">
+                <label>Invoice #</label>
+                <input type="text" value="001">
+                <label>Date</label>
+                <input type="date" id="datePicker">
+            </div>
+        </div>
+    </div>
+
+    <div class="address-section">
+        <div class="addr-box">
+            <h3>From</h3>
+            <textarea class="address-input" placeholder="Your Company Name&#10;Address Line 1&#10;City, State, Zip"></textarea>
+        </div>
+        <div class="addr-box" style="text-align:right;">
+            <h3>Bill To</h3>
+            <textarea class="address-input" style="text-align:right;" placeholder="Client Name&#10;Client Company&#10;Client Address"></textarea>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <table id="invoiceTable">
+            <thead>
+                <tr>
+                    <th width="50%">Description</th>
+                    <th width="15%" style="text-align:right;">Rate</th>
+                    <th width="10%" style="text-align:right;">Qty</th>
+                    <th width="25%" style="text-align:right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" class="desc" placeholder="Service description"></td>
+                    <td><input type="number" class="num rate" placeholder="0.00"></td>
+                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><span class="amount-display">0.00</span></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="desc" placeholder="Service description"></td>
+                    <td><input type="number" class="num rate" placeholder="0.00"></td>
+                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><span class="amount-display">0.00</span></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="desc" placeholder="Service description"></td>
+                    <td><input type="number" class="num rate" placeholder="0.00"></td>
+                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><span class="amount-display">0.00</span></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="desc" placeholder="Service description"></td>
+                    <td><input type="number" class="num rate" placeholder="0.00"></td>
+                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><span class="amount-display">0.00</span></td>
+                </tr>
+                <tr>
+                    <td><input type="text" class="desc" placeholder="Service description"></td>
+                    <td><input type="number" class="num rate" placeholder="0.00"></td>
+                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><span class="amount-display">0.00</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="totals-section">
+        <div class="totals-card">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span id="subtotalDisplay">0.00</span>
+            </div>
+            <div class="total-row">
+                <span>Tax (%) <input type="number" id="taxInput" value="0" style="width:40px; text-align:center; border:1px solid #ddd;"></span>
+                <span id="taxDisplay">0.00</span>
+            </div>
+            <div class="grand-total-row">
+                <span>TOTAL</span>
+                <span id="totalDisplay">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <textarea style="width:100%; text-align:center; height:40px; background:transparent; border:none;" placeholder="Payment Terms: Payment due within 30 days. Bank Transfer details..."></textarea>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('datePicker').valueAsDate = new Date();
+
+    const table = document.getElementById('invoiceTable');
+    const taxInput = document.getElementById('taxInput');
+
+    function updateTotals() {
+        let subtotal = 0;
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const rate = parseFloat(row.querySelector('.rate').value) || 0;
+            const qty = parseFloat(row.querySelector('.qty').value) || 0;
+            const amount = rate * qty;
+            
+            row.querySelector('.amount-display').innerText = amount.toFixed(2);
+            subtotal += amount;
+        });
+
+        const taxRate = parseFloat(taxInput.value) || 0;
+        const taxAmount = subtotal * (taxRate / 100);
+        const grandTotal = subtotal + taxAmount;
+
+        document.getElementById('subtotalDisplay').innerText = subtotal.toFixed(2);
+        document.getElementById('taxDisplay').innerText = taxAmount.toFixed(2);
+        document.getElementById('totalDisplay').innerText = grandTotal.toFixed(2);
+    }
+
+    // Attach listeners
+    table.addEventListener('input', updateTotals);
+    taxInput.addEventListener('input', updateTotals);
+</script>
+
+</body>
+</html>
