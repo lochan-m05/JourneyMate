@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Journey Mate Invoice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Mate Invoice</title>
     <style>
-        /* FORCE COLORS TO PRINT */
+        /* --- RESET & BASICS --- */
         * {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
@@ -19,68 +20,58 @@
             color: #333;
         }
 
-        /* PRINT BUTTON */
-        .print-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #2e1b4e;
-            color: white;
-            border: 2px solid #f7941d;
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            z-index: 1000;
-        }
-
-        /* PAGE CONTAINER */
+        /* --- CONTAINER --- */
         .container {
             max-width: 800px;
             margin: 0 auto;
             background: white;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            min-height: 1000px;
             position: relative;
-            padding-bottom: 100px; /* Space for footer */
+            overflow: hidden;
+            min-height: 900px;
+            padding-bottom: 100px;
         }
 
-        /* HEADER */
+        /* --- WATERMARK --- */
+        .watermark {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            opacity: 0.08;
+            z-index: 0;
+            pointer-events: none;
+            mix-blend-mode: screen; 
+        }
+
+        /* --- HEADER --- */
         .header {
-            background-color: #2e1b4e;
+            background-color: #000000;
             color: white;
-            padding: 40px 50px;
+            padding: 30px 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 5px solid #f7941d;
-            flex-wrap: wrap; /* Allows wrapping on mobile */
+            border-bottom: 4px solid #f7941d;
+            position: relative;
+            z-index: 2;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            background: white; 
-            padding: 5px 15px;
-            border-radius: 4px;
-        }
-        
-        .logo-img {
-            height: 60px;
+        .logo-container img {
+            height: 70px;
             width: auto;
             display: block;
         }
 
-        .invoice-details {
-            text-align: right;
-        }
+        .invoice-details { text-align: right; }
+        
         .invoice-details h1 {
             margin: 0;
-            font-size: 40px;
+            font-size: 36px;
             letter-spacing: 2px;
-            opacity: 0.2;
+            color: #ffffff !important;
+            opacity: 1 !important;
             text-transform: uppercase;
         }
 
@@ -91,177 +82,220 @@
             justify-content: end;
             margin-top: 10px;
         }
+
         .invoice-meta-grid label {
             text-align: right;
             font-size: 12px;
-            opacity: 0.8;
+            color: #ffffff !important;
+            opacity: 1 !important;
             padding-top: 6px;
-        }
-        .invoice-meta-grid input {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 5px;
-            width: 120px;
-            text-align: right;
-            font-family: inherit;
+            font-weight: bold;
         }
 
-        /* ADDRESS SECTION */
+        .invoice-meta-grid input {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 5px;
+            width: 110px;
+            text-align: right;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* --- ADDRESS SECTION --- */
         .address-section {
             display: flex;
             justify-content: space-between;
-            padding: 40px 50px;
-            gap: 40px;
+            padding: 30px 40px;
+            gap: 20px;
+            position: relative;
+            z-index: 2;
         }
         .addr-box { width: 48%; }
         .addr-box h3 {
             color: #f7941d;
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
+            padding-bottom: 4px;
         }
         textarea.address-input {
             width: 100%;
-            height: 80px;
+            height: 70px;
             border: 1px dashed #ccc;
-            padding: 10px;
+            padding: 8px;
             font-family: inherit;
             resize: none;
-            background: #fafafa;
+            background: rgba(255,255,255,0.8);
+            font-size: 13px;
         }
 
-        /* TABLE */
+        /* --- TABLE --- */
         .table-wrapper { 
-            padding: 0 50px; 
-            overflow-x: auto; /* Enables scroll on mobile */
+            padding: 0 40px; 
+            position: relative;
+            z-index: 2;
         }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; } /* Min width prevents squishing */
+        table { width: 100%; border-collapse: collapse; }
+        
         th {
             background-color: #f7941d;
             color: white;
-            padding: 12px 15px;
+            padding: 10px;
             text-transform: uppercase;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             text-align: left;
         }
-        td { border-bottom: 1px solid #eee; padding: 5px 10px; }
         
-        input.desc { width: 100%; padding: 10px; border: none; }
-        input.num { width: 100%; padding: 10px; border: none; text-align: right; }
-        input:focus, textarea:focus { background: #fdfdfd; outline: 1px solid #ddd; }
+        td { border-bottom: 1px solid #eee; padding: 5px; vertical-align: middle; }
+        
+        input.desc { width: 100%; padding: 8px; border: none; background: transparent; }
+        input.num { width: 100%; padding: 8px; border: none; text-align: right; background: transparent; }
+        input:focus { background: #fff; outline: 1px solid #f7941d; }
 
         .amount-display {
             display: block;
             text-align: right;
-            padding-right: 15px;
+            padding-right: 10px;
             color: #333;
             font-weight: 500;
         }
 
-        /* TOTALS */
+        /* --- BUTTONS (Add / Remove) --- */
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .add-btn:hover { background: #218838; }
+
+        .delete-btn {
+            background: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            line-height: 22px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0;
+        }
+        .delete-btn:hover { background: #dc3545; color: white; }
+
+        /* --- TOTALS --- */
         .totals-section {
-            padding: 30px 50px;
+            padding: 20px 40px;
             display: flex;
             justify-content: flex-end;
+            position: relative;
+            z-index: 2;
         }
         .totals-card {
-            width: 300px;
-            background: #f9f9f9;
-            padding: 20px;
+            width: 250px;
+            background: rgba(249, 249, 249, 0.9);
+            padding: 15px;
             border-radius: 4px;
         }
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
+            margin-bottom: 8px;
+            font-size: 13px;
         }
         .grand-total-row {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #2e1b4e;
-            color: #2e1b4e;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #000;
+            color: #000;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
         }
 
-        /* FOOTER */
+        /* --- FOOTER --- */
         .footer {
             position: absolute;
             bottom: 0;
             left: 0;
-            right: 0;
+            width: 100%;
+            padding: 20px 40px;
             background: #eee;
-            padding: 20px 50px;
-            font-size: 12px;
-            color: #666;
-            text-align: center;
+            z-index: 2;
         }
 
-        /* --- MOBILE RESPONSIVE STYLES --- */
-        @media screen and (max-width: 768px) {
-            body { padding: 0; }
-            .container { padding-bottom: 0; min-height: auto; }
-            
-            .header {
-                flex-direction: column;
-                gap: 20px;
-                padding: 20px;
-                text-align: center;
-            }
-            .logo-container { margin-bottom: 10px; }
+        /* --- FLOATING PRINT BUTTON --- */
+        .print-btn-float {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f7941d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- MOBILE TWEAKS --- */
+        @media screen and (max-width: 600px) {
+            .header { flex-direction: column; text-align: center; gap: 15px;}
             .invoice-details { text-align: center; width: 100%; }
             .invoice-meta-grid { justify-content: center; }
-
-            .address-section {
-                flex-direction: column;
-                padding: 20px;
-                gap: 20px;
-            }
-            .addr-box { width: 100%; text-align: left !important; }
-            .addr-box textarea { text-align: left !important; }
-
-            .table-wrapper { padding: 0 20px; }
-            
-            .totals-section { padding: 20px; }
-            .totals-card { width: 100%; }
-
-            .footer { position: relative; padding: 20px; }
+            .address-section { flex-direction: column; padding: 20px; }
+            .addr-box { width: 100%; }
+            .table-wrapper { overflow-x: auto; }
+            table { min-width: 500px; }
         }
 
-        /* PRINT SETTINGS (Always keeps A4 layout) */
+        /* --- PRINT SETTINGS --- */
         @media print {
-            body { padding: 0; background: white; }
-            .container { box-shadow: none; margin: 0; width: 100%; max-width: 100%; min-height: 100vh;}
-            .print-btn { display: none !important; }
-            textarea, input { border: none !important; background: transparent !important; resize: none; }
-            input::placeholder, textarea::placeholder { color: transparent; }
+            body { margin: 0; padding: 0; background: white; }
+            .container { 
+                width: 100%; max-width: 100%; box-shadow: none; 
+                margin: 0; border: none; min-height: auto; 
+            }
             
-            /* Reset responsive styles for print */
-            .header { flex-direction: row; text-align: left; }
-            .address-section { flex-direction: row; }
-            .addr-box { width: 48%; }
-            .table-wrapper { overflow: visible; }
+            /* HIDE BUTTONS ON PRINT */
+            .print-btn-float, .add-btn, .delete-btn { display: none !important; }
+            
+            /* Hide the "Action" column in the table */
+            .action-col { display: none !important; }
+
+            textarea, input { border: none !important; resize: none; padding: 0;}
+            html, body { height: 100%; overflow: hidden; }
+            @page { size: auto; margin: 5mm; }
         }
     </style>
 </head>
 <body>
 
-<button class="print-btn" onclick="window.print()">🖨️ Print</button>
+<button class="print-btn-float" onclick="window.print()">Print Invoice</button>
 
 <div class="container">
     
+    <img src="logo.jpeg" class="watermark" alt="">
+
     <div class="header">
         <div class="logo-container">
-            <img src="logo.jpeg" alt="Logo" class="logo-img">
+            <img src="logo.jpeg" alt="Journey Mate" class="logo-img">
         </div>
-
         <div class="invoice-details">
             <h1>INVOICE</h1>
             <div class="invoice-meta-grid">
@@ -276,11 +310,11 @@
     <div class="address-section">
         <div class="addr-box">
             <h3>From</h3>
-            <textarea class="address-input" placeholder="Your Company Name&#10;Address Line 1&#10;City, State, Zip"></textarea>
+            <textarea class="address-input" placeholder="Your Company Name..."></textarea>
         </div>
         <div class="addr-box" style="text-align:right;">
             <h3>Bill To</h3>
-            <textarea class="address-input" style="text-align:right;" placeholder="Client Name&#10;Client Company&#10;Client Address"></textarea>
+            <textarea class="address-input" style="text-align:right;" placeholder="Client Name..."></textarea>
         </div>
     </div>
 
@@ -288,45 +322,24 @@
         <table id="invoiceTable">
             <thead>
                 <tr>
-                    <th width="50%">Description</th>
+                    <th width="45%">Description</th>
                     <th width="15%" style="text-align:right;">Rate</th>
                     <th width="10%" style="text-align:right;">Qty</th>
                     <th width="25%" style="text-align:right;">Amount</th>
-                </tr>
+                    <th width="5%" class="action-col"></th> </tr>
             </thead>
-            <tbody>
+            <tbody id="tableBody">
                 <tr>
-                    <td><input type="text" class="desc" placeholder="Description"></td>
-                    <td><input type="number" class="num rate" placeholder="0.00"></td>
-                    <td><input type="number" class="num qty" placeholder="1"></td>
+                    <td><input type="text" class="desc" placeholder="Item description"></td>
+                    <td><input type="number" class="num rate" placeholder="0" oninput="updateTotals()"></td>
+                    <td><input type="number" class="num qty" placeholder="1" oninput="updateTotals()"></td>
                     <td><span class="amount-display">0.00</span></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="desc" placeholder="Description"></td>
-                    <td><input type="number" class="num rate" placeholder="0.00"></td>
-                    <td><input type="number" class="num qty" placeholder="1"></td>
-                    <td><span class="amount-display">0.00</span></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="desc" placeholder="Description"></td>
-                    <td><input type="number" class="num rate" placeholder="0.00"></td>
-                    <td><input type="number" class="num qty" placeholder="1"></td>
-                    <td><span class="amount-display">0.00</span></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="desc" placeholder="Description"></td>
-                    <td><input type="number" class="num rate" placeholder="0.00"></td>
-                    <td><input type="number" class="num qty" placeholder="1"></td>
-                    <td><span class="amount-display">0.00</span></td>
-                </tr>
-                <tr>
-                    <td><input type="text" class="desc" placeholder="Description"></td>
-                    <td><input type="number" class="num rate" placeholder="0.00"></td>
-                    <td><input type="number" class="num qty" placeholder="1"></td>
-                    <td><span class="amount-display">0.00</span></td>
+                    <td class="action-col"><button class="delete-btn" onclick="removeRow(this)">×</button></td>
                 </tr>
             </tbody>
         </table>
+        
+        <button class="add-btn" onclick="addRow()">+ Add Item</button>
     </div>
 
     <div class="totals-section">
@@ -336,7 +349,7 @@
                 <span id="subtotalDisplay">0.00</span>
             </div>
             <div class="total-row">
-                <span>Tax (%) <input type="number" id="taxInput" value="0" style="width:40px; text-align:center; border:1px solid #ddd;"></span>
+                <span>Tax (%) <input type="number" id="taxInput" value="0" oninput="updateTotals()" style="width:40px; text-align:center; border:1px solid #ddd; background:white;"></span>
                 <span id="taxDisplay">0.00</span>
             </div>
             <div class="grand-total-row">
@@ -347,20 +360,18 @@
     </div>
 
     <div class="footer">
-        <textarea style="width:100%; text-align:center; height:40px; background:transparent; border:none;" placeholder="Payment Terms: Payment due within 30 days. Bank Transfer details..."></textarea>
+        <textarea style="width:100%; text-align:center; height:40px; background:transparent; border:none;" placeholder="Payment Terms: Due within 30 days..."></textarea>
     </div>
 
 </div>
 
 <script>
     document.getElementById('datePicker').valueAsDate = new Date();
-
-    const table = document.getElementById('invoiceTable');
     const taxInput = document.getElementById('taxInput');
 
     function updateTotals() {
         let subtotal = 0;
-        const rows = table.querySelectorAll('tbody tr');
+        const rows = document.querySelectorAll('#tableBody tr');
 
         rows.forEach(row => {
             const rate = parseFloat(row.querySelector('.rate').value) || 0;
@@ -380,10 +391,36 @@
         document.getElementById('totalDisplay').innerText = grandTotal.toFixed(2);
     }
 
-    table.addEventListener('input', updateTotals);
-    taxInput.addEventListener('input', updateTotals);
+    function addRow() {
+        const tbody = document.getElementById('tableBody');
+        const tr = document.createElement('tr');
+        
+        tr.innerHTML = `
+            <td><input type="text" class="desc" placeholder="Item description"></td>
+            <td><input type="number" class="num rate" placeholder="0" oninput="updateTotals()"></td>
+            <td><input type="number" class="num qty" placeholder="1" oninput="updateTotals()"></td>
+            <td><span class="amount-display">0.00</span></td>
+            <td class="action-col"><button class="delete-btn" onclick="removeRow(this)">×</button></td>
+        `;
+        
+        tbody.appendChild(tr);
+    }
+
+    function removeRow(button) {
+        const row = button.closest('tr');
+        // Prevent deleting the last row if you want at least one (Optional)
+        if (document.querySelectorAll('#tableBody tr').length > 1) {
+            row.remove();
+            updateTotals();
+        } else {
+            // If it's the last row, just clear values
+            row.querySelector('.desc').value = '';
+            row.querySelector('.rate').value = '';
+            row.querySelector('.qty').value = '1';
+            updateTotals();
+        }
+    }
 </script>
 
 </body>
 </html>
-
